@@ -1,4 +1,4 @@
-# HW Repository for CAP5619
+# CAP5619-sp24
 
 This is a personal repository to manage the assignment submission for CAP5619: Deep and Reinforcement Learning Fundamentals at Florida State University.
 
