@@ -149,12 +149,19 @@ justification.
 %------------------------------------------------
 
 \subsection*{Answer}
-For the following results, refer to \verb|q2main.ipynb| for the code. 
+For the following results, refer to \verb|q2main.ipynb| for the code. We have used 1-layer neural nets for this problem. To find out the number of neurons needed, we calculated the maximal absolute error between $g(x)$ and our neural nets for the test samples (generated from $1000$ points in the interval $[-2,2]$) at the end of the training for each number of neurons. As a result, we have found that the 1-layer NN with two neurons achieves the maximal error of \verb|0.17413616|, while the NN with three neurons achieved \verb|0.04976749|, which is below the required threshold. Therefore, we will use this three layer NN for the subsequent problems. The models we mentioned above are included in the \verb|code| folder, with the file name \verb|net_2.pt| for 2 neurons NN, and \verb|net_3.pt| for 3 neurons NN. For the training, we used the SGD with momentum using the learning rate $0.01$ and the momentum constant $0.1$.
 
 \begin{enumerate}[label = (\alph*)]
-	\item 
+	\item Figure \ref{fig: q2a} shows the figure for the training error, the average test error and the maximal test error. 
+    \item 
 \end{enumerate}
 
+\begin{figure}[!htbp]
+    \centering
+    \includegraphics[width=\linewidth]{HW1/q2a.png}
+    \caption{The training loss (MSE loss), the maximal absolute test error and the average absolute test error for the three neurons NN.}
+    \label{fig: q2a}
+\end{figure}
 %----------------------------------------------------------------------------------------
 
 \section*{Question 3}
