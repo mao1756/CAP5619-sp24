@@ -43,6 +43,7 @@
 \usepackage{amsmath}
 \usepackage{enumitem}
 \usepackage{mwe}
+\usepackage{comment}
 
 %----------------------------------------------------------------------------------------
 %	ASSIGNMENT INFORMATION
@@ -95,12 +96,12 @@ value.
 %------------------------------------------------
 
 \subsection*{Answer}
-We will first find the gradients analytically and then show the plot and the list(See Figure \ref{fig:gradients_q1}).
+We will first find the gradients analytically and then show the plot (See Figure \ref{fig:gradients_q1}) and and the list(See Table \ref{tab:q1} ).
 
 \begin{enumerate}[label = (\arabic*)]
 \item The gradient of the ReLU function is \( f'(z) = \begin{cases} 1 & \text{if } z > 0 \\ \text{undefined} & z=0\\ 0 & z<0 \end{cases}\). In Figure \ref{fig:gradients_q1}, the value of gradient at $z=0$ is set to be $0$.  
 \item By the Chain Rule, the gradient of the logistic sigmoid activation function is $f'(z) = -\frac{1}{(1+e^{-z})^2}\cdot (1+e^{-z})' = -\frac{1}{(1+e^{-z})^2} \cdot (-e^{-z}) = \frac{e^{-z}}{(1+e^{-z})^2} = \sigma(z)(1-\sigma(z))$.
-\item The gradient of the piece-wise linear unit is \( f'(z) = \begin{cases} 1 & \text{if } 0<z<1 \\ 0.1 & z>1, z<-1 \\ \text{undefined} & z=-1,1 \end{cases}\). In Figure \ref{fig:gradients_q1}, we will use $1$ for the undefined gradients.
+\item The gradient of the piece-wise linear unit is \( f'(z) = \begin{cases} 1 & \text{if } -1<z<1 \\ 0.1 & z>1, z<-1 \\ \text{undefined} & z=-1,1 \end{cases}\). In Figure \ref{fig:gradients_q1}, we will use $1$ for the undefined gradients.
 \item In an explicit form, Swish is $f(z) =\frac{z}{1+e^{-2.5z}}$. Therefore, by the Quotient Rule, we have 
 \begin{align*}f'(z) &= \frac{1\cdot (1+e^{-2.5z})-z\cdot (-2.5)e^{-2.5z}}{(1+e^{-2.5z})^2} \\ &= \frac{1+e^{-2.5z}+2.5ze^{-2.5z}}{(1+e^{-2.5z})^2}\end{align*}
 \item The gradient of the ELU function is \( f'(z) = \begin{cases} 1 & \text{if } z > 0 \\ \text{undefined} & z=0\\ 0.05e^z & z<0 \end{cases}\). In Figure \ref{fig:gradients_q1}, the value of gradient at $z=0$ is set to be $1$. 
@@ -115,6 +116,27 @@ Figure \ref{fig:gradients_q1} shows the plot of the gradient for each function a
     \caption{The plot of the gradient of each function.}
     \label{fig:gradients_q1}
 \end{figure}
+
+\begin{table}[!htbp]
+    \centering
+    \begin{tabular}{|c||c|c|c|c|}
+        \hline
+         Function & Fast  & Active  & Slow & Inactive \\
+         \hline
+         ReLU & $(0,\infty)$ & $\emptyset$  & $\emptyset$ & $(-\infty,0]$\\
+         \hline
+         Sigmoid & $\emptyset$ & [-4.58, 4.58]  & (-$\infty$, -4.58)$\cup$ (4.58, $\infty$ ) & $\emptyset$\\
+         \hline
+         PLU & [-1,1] & (-$\infty$, -1)$\cup$ (1, $\infty$)  & $\emptyset$ & $\emptyset$\\
+         \hline
+         Swish & (0.49, $\infty$) &  [-2.50,-0.53]$\cup$ [-0.49,0.49] & (-$\infty$,-2.5)$\cup$(-0.53,-0.51)$\cup$(-0.51,-0.49) & $\{-0.51\}$\\
+         \hline
+         ELU & [0,$\infty$) & [-$\log{5}$,0)  & (-$\infty$, -$\log{5}$) & $\emptyset$\\
+         \hline
+    \end{tabular}
+    \caption{The actiavtion regions for each function. The decimals are rounded to the nearest hundredth.}
+    \label{tab:q1}
+\end{table}
 
 %----------------------------------------------------------------------------------------
 
@@ -154,7 +176,7 @@ For the following results, refer to \verb|q2main.ipynb| for the code. We have us
 \begin{enumerate}[label = (\alph*)]
 	\item Figure \ref{fig: q2a} shows the figure for the training error, the average test error, and the maximal test error. 
     \item Figure \ref{fig: q2b} shows the activation regions for each input along with their activation patterns.
-    \item Figure \ref{fig: q3} shows the Hamming distances between the activation pattern at the beginning and the end of each epoch. The Hamming distances were calculated using the \verb|spatial.distance.hamming| from \verb|scipy|. The trend is consistent with my expectation that the Hamming distance should eventually be close to zero as the epoch increases. The justification behind this expectation is that the weights should stabilize as they converge, leading to less change before and after an epoch.
+    \item Figure \ref{fig: q3} shows the sum of Hamming distances between the activation pattern at the beginning and the end of each epoch. The Hamming distances were calculated using the \verb|spatial.distance.hamming| from \verb|scipy|. The trend is consistent with my expectation that the Hamming distance should eventually be close to zero as the epoch increases. The justification behind this expectation is that the weights should stabilize as they converge, leading to less change before and after an epoch.
 \end{enumerate}
 
 \begin{figure}[!htbp]
@@ -174,7 +196,7 @@ For the following results, refer to \verb|q2main.ipynb| for the code. We have us
 \begin{figure}[!htbp]
     \centering
     \includegraphics[width=0.9\linewidth]{HW1/q3.png}
-    \caption{The Hamming distance at each epoch. We observe that the Hamming distance will be close to zero as the model converges. We observe some oscillations from stochastic noise generated by SGD, but overall, the trend fits our expectations.}
+    \caption{The sum of Hamming distances at each epoch. We observe that the quantity will be close to zero as the model converges. We observe some oscillations from stochastic noise generated by SGD, but overall, the trend fits our expectations.}
     \label{fig: q3}
 \end{figure}
 %----------------------------------------------------------------------------------------
@@ -266,7 +288,7 @@ variable.)
     \end{figure}
     \item The problem we would like to solve is the following.     \begin{align}
         &\textrm{minimize } \|\Delta x\|_{L^\infty} \\
-        &\textrm{subject to } p(x_0+\Delta x, 5) \geq p(x_0+\Delta x, i), i=0,\cdots ,19 \label{eqn: max_constraint}
+        &\textrm{subject to } p(x_0+\Delta x, 5) \geq p(x_0+\Delta x, i), i=0,\cdots ,19
     \end{align}
     This problem is equivalent to the following "epigraph form":
         \begin{align}
@@ -322,10 +344,12 @@ variable.)
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\linewidth]{HW1/q4-5.png}
-        \caption{The predicted probability for $x_0+\Delta x$ and $x_0+1.1\Delta x$ where $\Delta x$ is the solution for the linear programming problem. By the standard fact about linear programming, $\Delta x$ lies on the boundary of our constrained space, meaning that our adversarial example is "almost" classified as another class (class 0 in our case). We can also see that the higher probability on class 5 is not a coincidence by slightly increasing the magnitude of $\Delta x$, which can be seen in the figure}
+        \caption{The predicted probability for $x_0+\Delta x$ and $x_0+1.1\Delta x$ where $\Delta x$ is the solution for the linear programming problem. By the standard fact about linear programming, $\Delta x$ lies on the boundary of our constrained space, meaning that our adversarial example is "almost" classified as another class (class 0 in our case). We can also see that the higher probability on class 5 is not a coincidence by slightly increasing the magnitude of $\Delta x$, which can be seen in the figure.}
         \label{fig:q4-5}
     \end{figure}
 \end{enumerate}
+
+\begin{comment}
 
 %----------------------------------------------------------------------------------------
 
@@ -353,6 +377,8 @@ variable.)
 	
 	\medskip
 \end{problem}
+
+
 
 %------------------------------------------------
 
@@ -392,6 +418,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
+
+\end{comment}
 
 \begin{thebibliography}{9}
 \bibitem{szeg}
