@@ -305,24 +305,24 @@ variable.)
         c &= \begin{pmatrix}\textbf{0}_{100} \\ 1\end{pmatrix}\\
         v &= \begin{pmatrix} \Delta x \\ t \end{pmatrix} \\
         A &= \begin{pmatrix}
-            (w_1-w_5)^T & 0 \\
+            (w_0-w_5)^T & 0 \\
             \vdots & \vdots \\
             (w_{19}-w_5)^T & 0 \\
             \textbf{E}_{100\times 100} & -\textbf{1}_{100} \\
             -\textbf{E}_{100\times 100} & -\textbf{1}_{100}
         \end{pmatrix} \\
-        u &= \begin{pmatrix}-(b_1-b_5) - (w_1-w_5)^T x_0 \\ \vdots \\ -(b_{19}-b_5) - (w_{19}-w_5)^T x_0 \\ \textbf{0}_{200}\end{pmatrix}
+        u &= \begin{pmatrix}-(b_0-b_5) - (w_0-w_5)^T x_0 \\ \vdots \\ -(b_{19}-b_5) - (w_{19}-w_5)^T x_0 \\ \textbf{0}_{200}\end{pmatrix}
     \end{align}
-    where $\textbf{0}_{n}$ is the $n$ dimensional vector with zeros, $\textbf{1}_n$ is similar for ones, and $\textbf{E}_{100\times 10}$ is the $100\times 100$ identity matrix. Then our problem becomes
+    where $\textbf{0}_{n}$ is the $n$ dimensional vector with zeros, $\textbf{1}_n$ is the analogous vector for ones, and $\textbf{E}_{100\times 10}$ is the $100\times 100$ identity matrix. Then our problem becomes
     \begin{align}
         &\textrm{minimize } c^T v \\
         &\textrm{subject to }  Av \leq u
     \end{align}
-    which is the standard form of linear programming. Figure \ref{fig:q4-5} shows the predicted probability for the adversarial example generated. We note that class 0 and class 5 achieve the same probability up to numerical precision, and thus, the example can be classified as class 0 and class 5. However, by slightly increasing the magnitude of $\Delta x$, we can observe that our example will indeed be classified as class 5 and nothing else. This shows that our $\Delta x$ has the minimal magnitude to satisfy the constraint and that $x_0+\Delta x$ works as the adversarial example.
+    which is the standard form of linear programming. We will now solve the problem using the \verb|linprog| function on \verb|scipy|. Figure \ref{fig:q4-5} shows the predicted probability for the adversarial example generated. We note that class 0 and class 5 achieve the same probability up to numerical precision, and thus, the example can be classified as class 0 and class 5. However, by slightly increasing the magnitude of $\Delta x$, we can observe that our example will indeed be classified as class 5 and nothing else. This shows that our $\Delta x$ has the minimal magnitude to satisfy the constraint and that $x_0+\Delta x$ works as the adversarial example.
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\linewidth]{HW1/q4-5.png}
-        \caption{The predicted probability for $x_0+\Delta x$ and $x_0+1.1\Delta x$ where $\Delta x$ is the solution for the linear programming problem. By the standard fact about linear programming, $\Delta x$ lies on the boundary of our constrained space, meaning that our adversarial example is "almost" classified as another class (class 0 in our case). We can also see that the higher probability on class 5 is not a coincidence by slightly increasing the magnitude of $\Delta x$, which can be seen above.}
+        \caption{The predicted probability for $x_0+\Delta x$ and $x_0+1.1\Delta x$ where $\Delta x$ is the solution for the linear programming problem. By the standard fact about linear programming, $\Delta x$ lies on the boundary of our constrained space, meaning that our adversarial example is "almost" classified as another class (class 0 in our case). We can also see that the higher probability on class 5 is not a coincidence by slightly increasing the magnitude of $\Delta x$, which can be seen in the figure}
         \label{fig:q4-5}
     \end{figure}
 \end{enumerate}
