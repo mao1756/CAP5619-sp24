@@ -45,6 +45,9 @@
 \usepackage{mwe}
 \usepackage{comment}
 
+\newcommand{\T}{\mathsf{T}}
+\newcommand{\E}{\mathbb{E}}
+
 %----------------------------------------------------------------------------------------
 %	ASSIGNMENT INFORMATION
 %----------------------------------------------------------------------------------------
@@ -349,8 +352,64 @@ variable.)
     \end{figure}
 \end{enumerate}
 
-\begin{comment}
+\section*{Question 4}
 
+\begin{problem}
+In the paper “Distributed Representations of Words and Phrases and their Compositionality”
+(which can be downloaded from https://papers.nips.cc/paper/5021-distributed-representations-of-words-andphrases-and-their-compositionality.pdf), an objective function based on negative sampling is defined (see Equation
+(4) in the paper).
+(1) (2 points) Suppose that we use k negative samples to approximate the expectation, write down the objective
+function for one sample. Make sure that you define/explain all the variables in your function.
+(2) (2 points) Derive the learning rule using gradient descent for the objective function given in (1).
+(3) (1 point) Explain the key differences between the learning rule for part (2) and the one we derived in class
+for the skip gram model; if you think that the two learning rules are equivalent, justify your answer.
+
+\end{problem}
+
+\subsection*{Answer}
+\begin{enumerate}[label=(\arabic*)]
+    \item We interpret the problem as follows: we write down the objective function in the case $k=1$. As explained in the paper, we replace $\log P(w_{O}|w_{I})$ by equation (4) in the paper, so the objective function is
+    \begin{equation}
+        -\frac{1}{T}\sum_{t=1}^{T}\sum_{-c\leq j\leq c, j\neq 0}\left(\log{\sigma(v'^\T_{w_{t+j}} v_{w_t})} + \sum_{w\in W_{neg}}P_n(w)\log{\sigma(-v'^\T_{w} v_{w_t})}]\right) \label{eqn: objective_ns}
+    \end{equation}
+    Here, we consider a dictionary of $W$ words, $w_1,\cdots w_T$ is the training data of size $T$, $c$ is the window size, $v_{w}'$ is the output representation of the word $w$, $v_w$ is the input representation of the word $w$, $P_n(w)$ is the noise distribution, $\sigma(z)$ is the sigmoidal function, $v^\T$ represents the transpose of the vector $v$, and $W_{neg}$ is the set of negative samples.
+    \item Denote the objective in (\ref{eqn: objective_ns}) as $E$. We consider two cases.
+        \begin{enumerate}[label=(\roman*)]
+            \item The case for the input representation. The derivative of $E$ with respect to $v_{w_s,i}$ (the $i$th element of the vector $v_{w_s}$) is
+            \begin{align}
+                \frac{\partial E}{\partial w_{s,i}} &= -\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( \frac{\sigma'(v'^\T_{w_{t+j}} v_{w_t})}{\sigma(v'^\T_{w_{t+j}} v_{w_t})}v'_{w_{t+j},i}+\sum_{w\in W_{neg}}\frac{\sigma'(-v'^\T_{w} v_{w_t})}{\sigma(-v'^\T_{w} v_{w_t})}(-v'_{w,i}) \right) \\ &= -\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-\sum_{w\in W_{neg}}(1-\sigma(-v'^\T_{w} v_{w_t}))v'_{w,i} \right) \\ &=-\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-\sum_{w\in W_{neg}}\sigma(v'^\T_{w} v_{w_t})v'_{w,i} \right)
+            \end{align}
+            Therefore, the update rule by the gradient descent is
+            \begin{equation}
+                v_{w_s,i}^{new} = w_{w_s,i}^{old}+\frac{\eta}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-\sum_{w\in W_{neg}}\sigma(v'^\T_{w} v_{w_t})v'_{w,i} \right)
+            \end{equation}
+            or equivalently,
+            \begin{equation}
+                v_{w_s}^{new} = v_{w_s}^{new}+\frac{\eta}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j}}-\sum_{w\in W_{neg}}\sigma(v'^\T_{w} v_{w_t})v'_{w} \right)
+            \end{equation}
+            where $\eta$ is the learning rate.
+            \item The case for the output representation. Suppose $w_s$ is in the training set. Then, the derivative of $E$ with respect to $v_{w_s,i}$ (the $i$th element of the vector $v_{w_s}'$ is
+            \begin{align}
+                \frac{\partial E}{\partial w_{s,i}} &= -\frac{1}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left( \frac{\sigma'(v'^\T_{w_{t+j}} v_{w_t})}{\sigma(v'^\T_{w_{t+j}}v_{w_t})} v_{w_t,i}+P_n(w_{s}) \frac{\sigma'(-v'^\T_{w_{s}} v_{w_t})}{\sigma(-v'^\T_{w_{s}}v_{w_t})}v_{w_t,i}\right) \\
+                &= -\frac{1}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left(1-\sigma(v'^\T_{w_{t+j}} v_{w_t}) + P_n(w_s)\sigma(v'^\T_{w_s} v_{w_t})  \right)v_{w_t,i}
+            \end{align}
+            Therefore the update rule is
+            \begin{equation}
+                v_{w_s,i}'^{new} = w_{w_s,i}'^{old}+ \frac{\eta}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left(1-\sigma(v'^\T_{w_{t+j}} v_{w_t}) + P_n(w_s)\sigma(v'^\T_{w_s} v_{w_t})  \right)v_{w_t,i}
+            \end{equation}
+            or equivalently,
+            \begin{equation}
+                v_{w_s}'^{new} = w_{w_s}'^{old}+ \frac{\eta}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left(1-\sigma(v'^\T_{w_{t+j}} v_{w_t}) + P_n(w_s)\sigma(v'^\T_{w_s} v_{w_t})  \right)v_{w_t}
+            \end{equation}
+        \end{enumerate}
+
+    \item In both the input and output update rule, the training stops when $\sigma(v'^\T_{w_{t+j}} v_{w_t}) \sim 1$ and $\sigma(v'^\T_{w} v_{w_t}) \sim 0$. This means that the update rule tries to make context words as close as possible and make noises and context words as far as possible. This is fundamentally different from the original Skip-Gram model, where we do not try to distinguish the noise.
+    
+\end{enumerate}
+
+
+
+\begin{comment}
 %----------------------------------------------------------------------------------------
 
 \section*{Question 4 }
@@ -418,7 +477,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
-
 \end{comment}
 
 \begin{thebibliography}{9}
@@ -428,3 +486,16 @@ Szegedy, C., Zaremba, W., Sutskever, I., Bruna, J., Erhan, D., Goodfellow, I., \
 \end{thebibliography}
 
 \end{document}
+
+    \begin{comment}
+        \begin{enumerate}[label=(\roman*)]
+            \item The word $w_{s}$ is not in the training data. In this case, we have
+            \begin{align}
+                \frac{\partial E}{\partial w_{s,i}} &= \frac{1}{T}\sum_{t=1}^{T}P_n(w_s) \frac{\sigma'(-v'^\T_{w_s}v_{w_t})}{\sigma(-v'^\T_{w_s} v_{w_t})}\cdot (-v_{w_t,i}) \\ &= \frac{1}{T}\sum_{t=1}^{T}P_n(w_s) \frac{\sigma(-v'^\T_{w_s} v_{w_t})(1-\sigma(-v'^\T_{w_s} v_{w_t}))}{\sigma(-v'^\T_{w_s} v_{w_t})}\cdot (-v_{w_t,i}) \\ &= -\frac{1}{T}\sum_{t=1}^{T}P_n(w_s)(1-\sigma(-v'^\T_{w_s} v_{w_t}))v_{w_t ,i}
+            \end{align}
+            \item The word $w_{s}$ is in the training data. In this case, we have
+            \begin{align}
+                \frac{\partial E}{\partial w_{s,i}} = \frac{1}{T}\sum_{t=1}^{T}
+            \end{align}
+        \end{enumerate}
+    \end{comment}
