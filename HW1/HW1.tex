@@ -370,40 +370,39 @@ for the skip gram model; if you think that the two learning rules are equivalent
 \begin{enumerate}[label=(\arabic*)]
     \item We interpret the problem as follows: we write down the objective function in the case $k=1$. As explained in the paper, we replace $\log P(w_{O}|w_{I})$ by equation (4) in the paper, so the objective function is
     \begin{equation}
-        -\frac{1}{T}\sum_{t=1}^{T}\sum_{-c\leq j\leq c, j\neq 0}\left(\log{\sigma(v'^\T_{w_{t+j}} v_{w_t})} + \sum_{w\in W_{neg}}P_n(w)\log{\sigma(-v'^\T_{w} v_{w_t})}]\right) \label{eqn: objective_ns}
+        -\frac{1}{T}\sum_{t=1}^{T}\left(\sum_{-c\leq j\leq c, j\neq 0}\log{\sigma(v'^\T_{w_{t+j}} v_{w_t})} + 2c\log{\sigma(-v'^\T_{n_t} v_{w_t})}\right) \label{eqn: objective_ns}
     \end{equation}
-    Here, we consider a dictionary of $W$ words, $w_1,\cdots w_T$ is the training data of size $T$, $c$ is the window size, $v_{w}'$ is the output representation of the word $w$, $v_w$ is the input representation of the word $w$, $P_n(w)$ is the noise distribution, $\sigma(z)$ is the sigmoidal function, $v^\T$ represents the transpose of the vector $v$, and $W_{neg}$ is the set of negative samples.
+    Here, $w_1,\cdots w_T$ is the training data of size $T$, $c$ is the window size, $v_{w}'$ is the output representation of the word $w$, $v_w$ is the input representation of the word $w$, $\sigma(z)$ is the sigmoidal function, $v^\T$ represents the transpose of the vector $v$, and $n_t$ is the negative sample corresponding to the center word $w_t$.
+
     \item Denote the objective in (\ref{eqn: objective_ns}) as $E$. We consider two cases.
         \begin{enumerate}[label=(\roman*)]
             \item The case for the input representation. The derivative of $E$ with respect to $v_{w_s,i}$ (the $i$th element of the vector $v_{w_s}$) is
             \begin{align}
-                \frac{\partial E}{\partial w_{s,i}} &= -\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( \frac{\sigma'(v'^\T_{w_{t+j}} v_{w_t})}{\sigma(v'^\T_{w_{t+j}} v_{w_t})}v'_{w_{t+j},i}+\sum_{w\in W_{neg}}\frac{\sigma'(-v'^\T_{w} v_{w_t})}{\sigma(-v'^\T_{w} v_{w_t})}(-v'_{w,i}) \right) \\ &= -\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-\sum_{w\in W_{neg}}(1-\sigma(-v'^\T_{w} v_{w_t}))v'_{w,i} \right) \\ &=-\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-\sum_{w\in W_{neg}}\sigma(v'^\T_{w} v_{w_t})v'_{w,i} \right)
+                \frac{\partial E}{\partial v_{s,i}} &= -\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\left(\sum_{-c\leq j \leq c, j\neq 0}  \frac{\sigma'(v'^\T_{w_{t+j}} v_{w_t})}{\sigma(v'^\T_{w_{t+j}} v_{w_t})}v'_{w_{t+j},i}+2c\frac{\sigma'(-v'^\T_{n_t} v_{w_t})}{\sigma(-v'^\T_{n_t} v_{w_t})}(-v'_{w,i}) \right) \\ &= -\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\left(\sum_{-c\leq j \leq c, j\neq 0}  (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-2c(1-\sigma(-v'^\T_{n_t} v_{w_t}))v'_{w,i} \right) \\ &=-\frac{1}{T}\sum_{t=1, w_t=w_s}^{T}\left(\sum_{-c\leq j \leq c, j\neq 0}  (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-2c\sigma(v'^\T_{n_t} v_{w_t})v'_{w,i} \right)
             \end{align}
             Therefore, the update rule by the gradient descent is
             \begin{equation}
-                v_{w_s,i}^{new} = w_{w_s,i}^{old}+\frac{\eta}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-\sum_{w\in W_{neg}}\sigma(v'^\T_{w} v_{w_t})v'_{w,i} \right)
+                v_{w_s,i}^{new} = w_{w_s,i}+\frac{\eta}{T}\sum_{t=1, w_t=w_s}^{T}\left(\sum_{-c\leq j \leq c, j\neq 0}  (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j},i}-2c\sigma(v'^\T_{n_t} v_{w_t})v'_{w,i} \right)
             \end{equation}
             or equivalently,
             \begin{equation}
-                v_{w_s}^{new} = v_{w_s}^{new}+\frac{\eta}{T}\sum_{t=1, w_t=w_s}^{T}\sum_{-c\leq j \leq c, j\neq 0} \left( (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j}}-\sum_{w\in W_{neg}}\sigma(v'^\T_{w} v_{w_t})v'_{w} \right)
+                v_{w_s}^{new} = v_{w_s}+\frac{\eta}{T}\sum_{t=1, w_t=w_s}^{T}\left(\sum_{-c\leq j \leq c, j\neq 0}  (1-\sigma(v'^\T_{w_{t+j}} v_{w_t}))v'_{w_{t+j}}-2c\sigma(v'^\T_{n_t} v_{w_t})v'_{w} \right)
             \end{equation}
             where $\eta$ is the learning rate.
-            \item The case for the output representation. Suppose $w_s$ is in the training set. Then, the derivative of $E$ with respect to $v_{w_s,i}$ (the $i$th element of the vector $v_{w_s}'$ is
+            \item The case for the output representation. The derivative of $E$ with respect to $v_{w_s,i}'$ (the $i$th element of the vector $v_{w_s}'$) is
             \begin{align}
-                \frac{\partial E}{\partial w_{s,i}} &= -\frac{1}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left( \frac{\sigma'(v'^\T_{w_{t+j}} v_{w_t})}{\sigma(v'^\T_{w_{t+j}}v_{w_t})} v_{w_t,i}+P_n(w_{s}) \frac{\sigma'(-v'^\T_{w_{s}} v_{w_t})}{\sigma(-v'^\T_{w_{s}}v_{w_t})}v_{w_t,i}\right) \\
-                &= -\frac{1}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left(1-\sigma(v'^\T_{w_{t+j}} v_{w_t}) + P_n(w_s)\sigma(v'^\T_{w_s} v_{w_t})  \right)v_{w_t,i}
+                \frac{\partial E}{\partial v_{w_s,i}'} &= -\frac{1}{T}\left(\sum_{\substack{t=1\\n_t \neq w_s}}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}}\frac{\sigma'(v'^\T_{w_{t+j}} v_{w_t})}{\sigma(v'^\T_{w_{t+j}}v_{w_t})} v_{w_t,i}+2c\sum_{\substack{t=1\\n_t = w_s}}^T\frac{\sigma'(-v'^\T_{n_t} v_{w_t})}{\sigma(-v'^\T_{n_t} v_{w_t})}(-v_{w_t,i}) \right) \\ &=-\frac{1}{T}\left(\sum_{\substack{t=1\\n_t \neq w_s}}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}}(1-\sigma(v'^\T_{w_{t+j}} v_{w_t})) v_{w_t,i}-2c\sum_{\substack{t=1\\n_t = w_s}}^T\sigma(v'^\T_{n_t} v_{w_t})v_{w_t,i} \right)
             \end{align}
-            Therefore the update rule is
+            Therefore, the update rule is
             \begin{equation}
-                v_{w_s,i}'^{new} = w_{w_s,i}'^{old}+ \frac{\eta}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left(1-\sigma(v'^\T_{w_{t+j}} v_{w_t}) + P_n(w_s)\sigma(v'^\T_{w_s} v_{w_t})  \right)v_{w_t,i}
+                v_{w_s,i}'^{new} = w_{w_s,i}'+ \frac{\eta}{T}\left(\sum_{\substack{t=1\\n_t \neq w_s}}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}}(1-\sigma(v'^\T_{w_{t+j}} v_{w_t})) v_{w_t,i}-2c\sum_{\substack{t=1\\n_t = w_s}}^T\sigma(v'^\T_{n_t} v_{w_t})v_{w_t,i} \right)
             \end{equation}
             or equivalently,
             \begin{equation}
-                v_{w_s}'^{new} = w_{w_s}'^{old}+ \frac{\eta}{T}\sum_{t=1}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}} \left(1-\sigma(v'^\T_{w_{t+j}} v_{w_t}) + P_n(w_s)\sigma(v'^\T_{w_s} v_{w_t})  \right)v_{w_t}
+                v_{w_s}'^{new} = w_{w_s}'+ \frac{\eta}{T}\left(\sum_{\substack{t=1\\n_t \neq w_s}}^{T}\sum_{\substack{-c\leq j \leq c, j\neq 0, \\ w_{t+j}=w_s}}(1-\sigma(v'^\T_{w_{t+j}} v_{w_t})) v_{w_t}-2c\sum_{\substack{t=1\\n_t = w_s}}^T\sigma(v'^\T_{n_t} v_{w_t})v_{w_t} \right)
             \end{equation}
-        \end{enumerate}
-
-    \item In both the input and output update rule, the training stops when $\sigma(v'^\T_{w_{t+j}} v_{w_t}) \sim 1$ and $\sigma(v'^\T_{w} v_{w_t}) \sim 0$. This means that the update rule tries to make context words as close as possible and make noises and context words as far as possible. This is fundamentally different from the original Skip-Gram model, where we do not try to distinguish the noise.
+            \end{enumerate}
+    \item In both the input and output update rule, the training stops when $\sigma(v'^\T_{w_{t+j}} v_{w_t}) \sim 1$ and $\sigma(v'^\T_{n_t} v_{w_t}) \sim 0$. This means that the update rule tries to make context words as close as possible and make noises and context words as far as possible in terms of cosine similarity. This is fundamentally different from the original Skip-Gram model, where we do not try to distinguish the noise.
     
 \end{enumerate}
 
