@@ -166,7 +166,7 @@ Therefore, at each $k$, we need $n^{(k)}n^{(k-1)}$ multiplications, $n^{(k)}(n^{
     \item As $\a^{(k)}\in \mathbb{R}^{n^{(k)}}$, the evaluation of $f'(\a^{(k)})$ requires $n^{(k)}$ activations. Then, the elementwise multiplication with $\g \in \mathbb{R}^{n^{(k)}}$ requires $n^{(k)}$ multiplications. 
     \item Since $\nabla_{\b^{(k)}}\Omega (\theta) = 2\b^{(k)}\in \mathbb{R}^{n^{(k)}}$, the evaluation of $\lambda \nabla_{\b^{(k)}} \Omega (\theta)$ costs us 2 multiplications($\times 2$ and $\times \lambda$), and it is followed by $n^{(k)}$ additions to evaluate $\nabla_{b^{(k)}} J = \g + \lambda \nabla_{\b^{(k)}} \Omega (\theta)$.
     \item $\g {\h^{(k-1)}}^T$ is an outer product between $n^{(k)}$ and $n^{(k-1)}$ dimensional vectors, so we need $n^{(k)}n^{(k-1)}$ multiplications to evaluate this. On the other hand, since $\nabla_{\W^{(k)}}\Omega (\theta) = 2 \W^{(k)}$, we need $2$ multiplications to evaluate $\lambda \nabla_{\W^{(k)}}\Omega (\theta)$, and it is followed by $n^{(k)}n^{(k-1)}$ additions to evaluate $\g {\h^{(k-1)}}^T + \lambda \nabla_{\W^{(k)}}\Omega (\theta)$.
-    \item Finally, since ${W^{(k)}}^T\in \mathbb{R}^{n^{(k-1)}\times n^{(k)}}$, evaluating ${\W^{(k)}}^{T} \g$ requires $n^{(k)}n^{(k-1)}$ multiplications and $n^{(k-1)}(n^{(k)}-1)$ additions to evaluate it.
+    \item Finally, since ${\W^{(k)}}^T\in \mathbb{R}^{n^{(k-1)}\times n^{(k)}}$, evaluating ${\W^{(k)}}^{T} \g$ requires $n^{(k)}n^{(k-1)}$ multiplications and $n^{(k-1)}(n^{(k)}-1)$ additions to evaluate it.
 \end{itemize}
 To summarize, we need $n^{(k)} + 2+n^{(k)}n^{(k-1)}+2+n^{(k)}n^{(k-1)}= 2n^{(k)}n^{(k-1)}+n^{(k)}+4$ multiplications, $n^{(k)}+n^{(k)}n^{(k-1)}+n^{(k-1)}(n^{(k)}-1) = 2n^{(k)}n^{(k-1)}+n^{(k)}-n^{(k-1)}$ additions, and $n^{(k)}$ activations in one iteration. Therefore,
 \begin{itemize}
@@ -364,8 +364,10 @@ where $v$ is the momentum, $g$ is the gradient and $\theta$ is the parameter of 
 \begin{equation}
     v^{(\infty)} = \frac{-\eta g}{1-\alpha}
 \end{equation}
-This equation shows that the usual step size $-\eta g$ is multiplied by $\frac{1}{1-\alpha}$ when we use the gradient. For example, if $\alpha=0.99$, the momentum is $100$ times faster than the usual gradient descent when the gradient is roughly constant.
-\item 
+This equation shows that the usual step size $-\eta g$ is multiplied by $\frac{1}{1-\alpha}$ when we use the momentum. For example, if $\alpha=0.99$, the momentum is $100$ times faster than the usual gradient descent when the gradient is roughly constant.
+\item What corresponds to momentum in the Adam algorithm is the estimation of the first moment. In both the usual momentum and the Adam, the momentum or the first moment is initialized by zero. According to \cite{adam}, this causes the estimate to be biased towards zero. To correct the bias, the Adam algorithm divides the updated estimation by $1-\rho_1^t$, where $\rho_1$ is a hyperparameter and $t$ is the time step. \cite{adam} notes that the uncorrected estimation is especially biased when the decay rate is low (i.e., $\rho_1$ is close to 1, so the gradient decay is small) Therefore, the bias correction provided by Adam should provide a better estimate than the classical momentum method in this situation.
+
+\item In both the AdaGrad algorithm (Algorithm 8.4) and the RMSProp algorithm (Algorithm 8.5), the central trick is to accumulate the squared gradient. In AdaGrad, we sum up all the squared gradients in the current and past steps, and in RMSProp, we do the same, but we gradually decay the past gradients. Then, we use this accumulated square gradient $r$ to divide the learning rate used in the gradient descent step. According to the textbook, in the AdaGrad algorithm, the learning rate is changed to be $\frac{\epsilon}{\delta+\sqrt{r} }$ and in RMSProp, it is $\frac{\epsilon}{\sqrt{\delta+r}}$ where $\epsilon$ is the original learning rate and $\delta$ is a small parameter to avoid zero division. Since $r$ is a vector, the division above should be seen as an elementwise operation, meaning we have different learning rates for each parameter. The parameters with larger gradients would have a lower learning rate, stabilizing the learning, and the ones with smaller gradients would have a larger learning rate, promoting faster learning.
 
 \end{enumerate}
 %----------------------------------------------------------------------------------------
@@ -414,5 +416,10 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu
 \end{enumerate}
 
 %----------------------------------------------------------------------------------------
+\begin{thebibliography}{9}
+\bibitem{adam}
+Kingma, D. P., \& Ba, J. (2017). Adam: A Method for Stochastic Optimization. arXiv:1412.6980. https://arxiv.org/abs/1412.6980
+
+\end{thebibliography}
 
 \end{document}
