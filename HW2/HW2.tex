@@ -84,7 +84,7 @@
 %	ASSIGNMENT CONTENT
 %----------------------------------------------------------------------------------------
 
-\section*{Question 1}
+\section*{Problem 1}
 
 \begin{problem}
  For a fully connected multiple-layer perceptron neural network described in Algorithms 6.3 and
@@ -179,7 +179,7 @@ To summarize, we need $n^{(k)} + 2+n^{(k)}n^{(k-1)}+2+n^{(k)}n^{(k-1)}= 2n^{(k)}
 
 %----------------------------------------------------------------------------------------
 
-\section*{Question 2}
+\section*{Problem 2}
 
 \begin{problem}
      Answer the following questions regarding L2 and L1 regularization, and early stopping.
@@ -283,7 +283,7 @@ To summarize, we need $n^{(k)} + 2+n^{(k)}n^{(k-1)}+2+n^{(k)}n^{(k-1)}= 2n^{(k)}
     \end{align}
     where $\alpha$ is the regularization constant. We used the algebraic formula $\frac{\lambda}{\lambda+\alpha} = 1-\frac{\alpha}{\lambda+\alpha}$. Note that both $\Lambda$ and $\alpha I$ are diagonal matrices, so this formula applies directly. Now, if we  choose $\tau, \eta$ and $\alpha$ so that $(I-\eta \Lambda)^{\tau} = (\Lambda + \alpha I)^{-1}\alpha$, we see that $\theta^{(\tau)}=\tilde{\theta}$ and $L^2$ regularization is equivalent to early stopping. At least for lower dimensional cases (such as 1D), we can easily choose $\alpha,\eta$, and $\tau$ since we have three degrees of freedom while we have only one equation.
 
-    \item See Figure \ref{fig:l1sparse} and its caption for a graphical solution. \textcolor{red}{ADD MATHEMATICAL SOLUTION}
+    \item See Figure \ref{fig:l1sparse} and its caption for a graphical solution. 
     
     \begin{figure}
         \centering
@@ -332,7 +332,7 @@ To summarize, we need $n^{(k)} + 2+n^{(k)}n^{(k-1)}+2+n^{(k)}n^{(k-1)}= 2n^{(k)}
 
 %----------------------------------------------------------------------------------------
 
-\section*{Question 3}
+\section*{Problem 3}
 
 \begin{problem}
 Answer the following questions regarding gradient-based optimization algorithms for deep
@@ -372,53 +372,61 @@ This equation shows that the usual step size $-\eta g$ is multiplied by $\frac{1
 \end{enumerate}
 %----------------------------------------------------------------------------------------
 
-\section*{Question 4 (bonus marks)}
+\section*{Problem 4}
 
 \begin{problem}
+A central problem in machine learning (including deep learning) is how to make
+an algorithm that perform well not just on the training data, but also on new inputs. Two techniques that are shown to
+be effective empirically are dropout and batch normalization, even though the underlying mechanisms are not well
+entirely clear.
+\begin{enumerate}[label=(\arabic*)]
 
-\end{problem}
-
-%------------------------------------------------
-
-\subsection*{Answer}
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu luctus, imperdiet urna iaculis, mattis eros. Pellentesque iaculis odio vel nisl ullamcorper, nec faucibus ipsum molestie. Sed dictum nisl non aliquet porttitor. Etiam vulputate arcu dignissim, finibus sem et, viverra nisl. Aenean luctus congue massa, ut laoreet metus ornare in. Nunc fermentum nisi imperdiet lectus tincidunt vestibulum at ac elit. Nulla mattis nisl eu malesuada suscipit.
-
-%----------------------------------------------------------------------------------------
-
-\section*{Question 5 (bonus marks)}
-
-\begin{problem}
-	\lstinputlisting[
-		caption=Luftballons Perl Script, % Caption above the listing
-		label=lst:luftballons, % Label for referencing this listing
-		language=Perl, % Use Perl functions/syntax highlighting
-		frame=single, % Frame around the code listing
-		showstringspaces=false, % Don't put marks in string spaces
-		numbers=left, % Line numbers on left
-		numberstyle=\tiny, % Line numbers styling
-	]{}
-	
-	\begin{enumerate}
-		\item How many luftballons will be output by the Listing \ref{lst:luftballons} above?
-		\item Identify the regular expression in Listing \ref{lst:luftballons} and explain how it relates to the anti-war sentiments found in the rest of the script.
-	\end{enumerate}
-
-\end{problem}
-
-%------------------------------------------------
-
-\subsection*{Answer}
-
-\begin{enumerate}
-	\item 99 luftballons.
-	\item Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu luctus, imperdiet urna iaculis, mattis eros. Pellentesque iaculis odio vel nisl ullamcorper, nec faucibus ipsum molestie. Sed dictum nisl non aliquet porttitor. Etiam vulputate arcu dignissim, finibus sem et, viverra nisl. Aenean luctus congue massa, ut laoreet metus ornare in. Nunc fermentum nisi imperdiet lectus tincidunt vestibulum at ac elit. Nulla mattis nisl eu malesuada suscipit.
+\item What are the expected side effects of dropout, where additional noise is introduced by randomly removing
+neurons during training?
+\item Dropout is often regarded as an efficient way to implement bagging. Identify and explain the differences
+between bagging and dropout.
+\item What are the expected side effects of batch normalization, where normalization reduces the expressive power
+of the involved layers?
+\item While it is well defined how to perform normalization during the training phase on a minibatch (see equations
+(8.36) and (8.37) in the Deep Learning textbook), what to do at the test time is not clearly defined. Explain
+expected undesirable side effects.
+\item Based on your understanding, explain how dropout and batch normalization should be used jointly.
 \end{enumerate}
+\end{problem}
+
+%------------------------------------------------
+
+\subsection*{Answer}
+\begin{enumerate}[label = (\arabic*)]
+    \item First, it can increase the training time due to the noise affecting the gradient. Second, according to the textbook, since Dropout is a regularization technique, it reduces the capacity of the model. We need to increase the model size to mitigate this effect, and the increased computational cost might be too expensive to justify the use of Dropout. Moreover, we will have a hyperparameter (the dropout probability) to tune, which would complicate the training. Finally, \cite{liang2021rdrop} mentions that there is an inconsistency between the model in training (some nodes are dropped out) and the model in inference (all nodes are present), which hinders the model performance.
+
+    \item In Bagging, we create multiple models trained on different training sets, and each model is independent, meaning that no parameters are shared between each model. In Dropout, while multiple models are created by dropping out some nodes and trained on different training sets (minibatches), they are not independent and share the parameters. This allows us to simulate exponentially many different models without requiring exponentially large memory. Moreover, in Bagging, we typically train each model completely to the convergence, but this is not the case for bagging. In fact, most models are not explicitly trained at all since we only pick up a fraction of them randomly. It would still work well because of the parameter sharing, which allows us to train models we didn't choose.
+
+    \item Although batch normalization was introduced to mitigate the covariate shift, where the distribution of the input for each layer changes constantly, it has a few desirable and undesirable side effects. First, it has a regularization effect because of the noise introduced by the normalization operation. Since minibatches are chosen randomly, their mean and the variance naturally contain some randomness, which improves the regularization. Second, it can reduce the training time. On the other hand, due to its regularization effect, it can reduce the capacity of the model, but the textbook offers a way to avoid this by introducing new parameters scaling the normalized result. It also requires larger batch sizes for stable mean and variance estimation. Indeed, \cite{groupnorm} reports that reducing the batch size increases the model error dramatically.
+
+    \item According to the text, we use the moving average of means and the variance to normalize at the test time to allow an evaluation for a single sample. However, this is inconsistent with the behavior at the training, and \cite{failurebn} mentions that this causes Transformer models with batch normalization to perform poorly in NLP tasks.
+
+    \item The original paper \cite{batchnorm} states that since batch normalization acts as a regularizer, we can sometimes remove Droput for performance. In fact, \cite{doandbn} states that they often perform poorly when used together. \cite{doandbn} explains that the reason is due to \textit{variance shift}, which is caused by the change of variance of output coming from Dropout between the test and the training phase. To avoid this, the authors suggest two strategies: (1) Applying Dropout after all BN layers, and (2) Modify Dropout so that it is less prone to variance shift. For (2), they introduce the \textit{Uout} method, where instead of dropping out, we transform the input $x_i$ by $X=x_i+x_i r_i$ where $r_i$ follows the uniform distribution on $(-\beta, \beta)$ and $\beta$ is a hyperparameter. 
+\end{enumerate}
+
 
 %----------------------------------------------------------------------------------------
 \begin{thebibliography}{9}
 \bibitem{adam}
 Kingma, D. P., \& Ba, J. (2017). Adam: A Method for Stochastic Optimization. arXiv:1412.6980. https://arxiv.org/abs/1412.6980
+
+\bibitem{liang2021rdrop}
+Liang, X., Wu, L., Li, J., Wang, Y., Meng, Q., Qin, T., Chen, W., Zhang, M., \& Liu, T.-Y. (2021). R-Drop: Regularized Dropout for Neural Networks. arXiv. https://arxiv.org/abs/2106.14448
+
+\bibitem{groupnorm} Wu, Y., \& He, K. (2018). Group Normalization. arXiv:1803.08494. https://arxiv.org/abs/1803.08494
+
+\bibitem{failurebn} Wang, J., Wu, J., \& Huang, L. (2022). Understanding the Failure of Batch Normalization for Transformers in NLP. arXiv. arXiv:2210.05153.
+
+\bibitem{batchnorm}Ioffe, S., \& Szegedy, C. (2015). Batch Normalization: Accelerating Deep Network Training by Reducing Internal Covariate Shift. arXiv:1502.03167. https://arxiv.org/abs/1502.03167
+
+\bibitem{doandbn}Li, X., Chen, S., Hu, X., \& Yang, J. (2018). Understanding the Disharmony between Dropout and Batch Normalization by Variance Shift. arXiv:1801.05134. https://arxiv.org/abs/1801.05134
+
+
 
 \end{thebibliography}
 
