@@ -38,6 +38,12 @@
 
 \usepackage{enumerate} % To modify the enumerate environment
 
+% Additional packages needed
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{mwe}
+\usepackage{comment}
+
 %----------------------------------------------------------------------------------------
 %	ASSIGNMENT INFORMATION
 %----------------------------------------------------------------------------------------
@@ -67,14 +73,25 @@
 \section*{Question 1}
 
 \begin{problem}
-	What is the airspeed velocity of an unladen swallow?
+ For a fully connected multiple-layer perceptron neural network described in Algorithms 6.3 and
+6.4, where the L2 regularization of all the weights and biases is used as the regularization term (W(q)).
+\begin{enumerate}[label=(\arabic*)]
+    \item Give the number of addition operations, number of multiplication operations, and the number of activation
+function calculations for Algorithm 6.3. You need to express your answers in terms of columns and rows of the
+weight matrices and the length of bias vectors. Furthermore, we assume the square of x is done by x * x.
+    \item As in (1), give the numbers of addition operations, multiplication operations, and activation function
+calculations for Algorithm 6.4.
+Note that the addition and multiplication operations needed for activation function calculations are included implicitly
+in the number of activation function calculations and should not be included as additional addition and multiplication
+operations.
+
+\end{enumerate}
 \end{problem}
 
 %------------------------------------------------
 
 \subsection*{Answer}
 
-While this question leaves out the crucial element of the geographic origin of the swallow, according to Jonathan Corum, an unladen European swallow maintains a cruising airspeed velocity of \textbf{11 metres per second}, or \textbf{24 miles an hour}. The velocity of the corresponding African swallows requires further research as kinematic data is severely lacking for these species.
 
 %----------------------------------------------------------------------------------------
 
@@ -85,7 +102,7 @@ While this question leaves out the crucial element of the geographic origin of t
 	
 	\medskip
 	
-	\begin{enumerate}[(\itshape a\normalfont)] % Sub-questions styled as italic letters
+	\begin{enumerate}[label = (\alph*)] % Sub-questions styled as italic letters
 		\item Suppose ``chuck" implies throwing.
 		\item Suppose ``chuck" implies vomiting.
 	\end{enumerate}
@@ -95,7 +112,7 @@ While this question leaves out the crucial element of the geographic origin of t
 
 \subsection*{Answer}
 
-\begin{enumerate}[(\itshape a\normalfont)] % Sub-questions styled as italic letters
+\begin{enumerate}[label = (\alph*)] % Sub-questions styled as italic letters
 	\item According to the Associated Press (1988), a New York Fish and Wildlife technician named Richard Thomas calculated the volume of dirt in a typical 25--30 foot (7.6--9.1 m) long woodchuck burrow and had determined that if the woodchuck had moved an equivalent volume of wood, it could move ``about \textbf{700 pounds (320 kg)} on a good day, with the wind at his back".
     
 	\item A woodchuck can ingest 361.92 cm\textsuperscript{3} (22.09 cu in) of wood per day. Assuming immediate expulsion on ingestion with a 5\% retainment rate, a woodchuck could chuck \textbf{343.82 cm\textsuperscript{3}} of wood per day.
