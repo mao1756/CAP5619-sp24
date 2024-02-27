@@ -10,5 +10,7 @@ This is a personal repository to manage the assignment submission for CAP5619: D
 |2|Regularization and Optimization|TBD|
 
 ## Topics of each Programming Assignments
+
+|HW#|Topic|Grade I got|
 |----|----|----|
 |1|Neural Network Architectures, Optimization and Regularization Techniques|TBD|
