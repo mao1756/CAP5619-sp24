@@ -29,7 +29,7 @@
 %these are auxiliary definitions used in the title section
 \newcommand{\CourseLang}{Course}
 \newcommand{\DateLang}{Due date}
-\newcommand{\StudentLang}{Student name}
+\newcommand{\StudentLang}{Student(s) name}
 \newcommand{\ProfessorLang}{Professor}
 
 % Header and footers, we will use the titles also
