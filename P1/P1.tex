@@ -432,23 +432,33 @@ network you have.
 \subsection*{Answer}
 
 \begin{enumerate}[label = (\arabic*)] % Sub-questions styled as italic letters
-	\item In general, we need to take care of two things in initialization: (1) Breaking the symmetry and (2) uniform learning. Breaking symmetry refers to the strategy where we avoid initializing multiple weights by the same value. If we initialize by the same weight, using the same input and a deterministic learning algorithm would yield the same output \cite[p298]{Goodfellow-et-al-2016}, which is not efficient.  Uniform learning refers to the idea that all weights should be learned at the same rate, which again is concerned with the efficiency of the training. Moreover, when we have the ReLU activation, we need to initialize the biases by small positive numbers to avoid the dying neurons problem. Keeping this in mind, we test the following strategies adapted from \cite{Hosny2017} for all three networks. We only apply these strategies to weights and set all biases to $0.1$. This follows the recommendation in \cite[p298]{Goodfellow-et-al-2016} that we should set weights randomly, and biases should be set as a heuristically chosen constant.
+	\item In general, we need to take care of two things in initialization: (i) Breaking the symmetry and (ii) uniform learning. Breaking symmetry refers to the strategy where we avoid initializing multiple weights by the same value. If we initialize by the same weight, using the same input and a deterministic learning algorithm would yield the same output \cite[p298]{Goodfellow-et-al-2016}, which is not efficient.  Uniform learning refers to the idea that all weights should be learned at the same rate, which again is concerned with the efficiency of the training. Moreover, when we have the ReLU activation, we need to initialize the biases by small positive numbers to avoid the dying neurons problem. Keeping this in mind, we test the following strategies adapted from \cite{Hosny2017} for all three networks. We only apply these strategies to weights and set all biases to $0.1$. This follows the recommendation in \cite[p298]{Goodfellow-et-al-2016} that we should set weights randomly, and biases should be set as a heuristically chosen constant.
     \begin{enumerate}
-        \item \textbf{Zeros} and \textbf{Ones}. We set all of the weights to be either zeros or ones.
+        \item \textbf{Zero} and \textbf{One}. We set all of the weights to be either zeros or ones.
         
         \item \textbf{Normal}. We choose the weights from the normal distribution with mean $0$ and standard deviation $0.1$. We have also tested the standard normal distribution ($\textrm{SD}=1$), but we noticed an overflow in the initial loss (hence, the loss for all epochs was \verb|nan|).
         \item \textbf{Uniform}. We choose the weights from the uniform distribution on $[0,1]$.
         \item \textbf{Uniform Xavier (Glorot).} We choose the weights from the uniform distribution on $(-a,a)$ where $a = \sqrt{\frac{6}{n_{in}+n_{out}}}$, and $n_{in}$ and $n_{out}$ is determined as follows: For a fully connected layer, $n_{in}$ is the number of inputs and $n_{out}$ is the number of outputs. For a convolutional layer, $n_{in}$ is equal to $(\textrm{the number of input features})\times (\textrm{kernel size})^2$, and $n_{out}$ is similar with output features. We use the same $n_{in}$ and $n_{out}$ for a locally connected layer.
     \item \textbf{Normal Xavier (Glorot).} We choose the weights from the uniform distribution of mean $0$ and the variance $\frac{2}{n_{in}+n_{out}}$ where $n_{in}$ and $n_{out}$. These parameters have the same meaning as previously.
     \item \textbf{Orthogonal.} We initialize the weights by an orthogonal matrix. If the weights tensor have the dimension higher than $2$, we flatten the extraneous dimensions to get a $2$-D tensor (a matrix).
+    
+    The result for the fully connected network is shown in Figure \ref{fig:init_fc}.
     \end{enumerate}
 
-    \begin{figure}
+    \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\textwidth]{initialization_comparison}
-        \caption{Caption}
-        \label{fig:enter-label}
+        \caption{Comparison of initialization methods for the fully connected network. The legend is shared in both figures.}
+        \label{fig:init_fc}
     \end{figure}
+    From this figure, we can classify the initialization method in three cases:
+    \begin{enumerate}[label=(\arabic*)]
+        \item The learning is too slow for \textbf{Zero}, \textbf{One}, \textbf{Uniform} and \textbf{Normal}. In fact, the accuracy does not improve at all.
+        \item The learning is effective for \textbf{Normal Xavier}.
+        \item The learning is too fast for \textbf{Orthogonal}, \textbf{Truncated Normal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
+    \end{enumerate}
+    We will now consider the locally connected network. 
+
     
 	\item A woodchuck can ingest 361.92 cm\textsuperscript{3} (22.09 cu in) of wood per day. Assuming immediate expulsion on ingestion with a 5\% retainment rate, a woodchuck could chuck \textbf{343.82 cm\textsuperscript{3}} of wood per day.
 \end{enumerate}
