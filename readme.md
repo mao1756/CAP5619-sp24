@@ -14,3 +14,9 @@ This is a personal repository to manage the assignment submission for CAP5619: D
 |P#|Topic|Grade I got|
 |----|----|----|
 |1|Neural Network Architectures, Optimization and Regularization Techniques|TBD|
+
+## Term Project
+
+|P#|Title|Grade I got|
+|----|----|----|
+|1|TBD|TBD|
