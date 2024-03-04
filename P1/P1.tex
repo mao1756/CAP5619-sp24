@@ -453,12 +453,27 @@ network you have.
     \end{figure}
     From this figure, we can classify the initialization method in three cases:
     \begin{enumerate}[label=(\roman*)]
-        \item The learning is too slow for \textbf{Zero}, \textbf{One}, \textbf{Uniform} and \textbf{Normal}. In fact, the accuracy does not improve at all.
+        \item We believe that no method learns too slowly. In fact, we can observe that all initialization methods led to convergence to some local minima fairly quickly, although some converged to bad local minima.
         \item The learning is effective for \textbf{Normal Xavier}.
-        \item The learning is too fast for \textbf{Orthogonal}, \textbf{Truncated Normal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
+        \item The learning is too fast for  \textbf{Zero}, \textbf{One}, \textbf{Uniform} \textbf{Normal}, \textbf{Orthogonal}, \textbf{Truncated Normal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
     \end{enumerate}
-    We will now consider the locally connected network. 
+    We will now consider the locally connected network. Figure 
 
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{initialization_comparison_lc}
+        \caption{Comparison of initialization methods for the locally connected network.}
+        \label{fig:init_lc}
+    \end{figure}
+
+    From this figure, we can classify the initialization method in three cases:
+    \begin{enumerate}[label=(\roman*)]
+        \item The learning is too slow for  \textbf{Zero}, \textbf{Orthogonal} and \textbf{Truncated Normal}. In a separate experiment, we observed that Orthogonal and Truncated Normal can be as accurate as effective methods with more epochs.
+        \item The learning is effective for \textbf{Normal Xavier}, \textbf{Uniform Xavier} and \textbf{Normal}.
+        \item The training is too fast for \textbf{One}, and \textbf{Uniform} and they converged to some bad local minima.
+    \end{enumerate}
+
+    Finally, we consider the convolutional network.
     
 	\item A woodchuck can ingest 361.92 cm\textsuperscript{3} (22.09 cu in) of wood per day. Assuming immediate expulsion on ingestion with a 5\% retainment rate, a woodchuck could chuck \textbf{343.82 cm\textsuperscript{3}} of wood per day.
 \end{enumerate}
