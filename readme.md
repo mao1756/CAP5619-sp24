@@ -6,8 +6,9 @@ This is a personal repository to manage the assignment submission for CAP5619: D
 
 |HW#|Topic|Grade I got|
 |----|----|----|
-|1|Activation functions, Feedforward NNs, Distributed representations of words|TBD|
+|1|Activation functions, Feedforward NNs, Distributed representations of words|60+8(EC)/60|
 |2|Regularization and Optimization|TBD|
+
 
 ## Topics of each Programming Assignments
 
