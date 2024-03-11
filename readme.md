@@ -8,6 +8,7 @@ This is a personal repository to manage the assignment submission for CAP5619: D
 |----|----|----|
 |1|Activation functions, Feedforward NNs, Distributed representations of words|60+8(EC)/60|
 |2|Regularization and Optimization|TBD|
+|3|Convolutional and Recurrent Neural Networks|TBD|
 
 
 ## Topics of each Programming Assignments
