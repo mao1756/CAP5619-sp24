@@ -457,7 +457,7 @@ network you have.
         \item The learning is effective for \textbf{Normal Xavier}.
         \item The learning is too fast for  \textbf{Zero}, \textbf{One}, \textbf{Uniform} \textbf{Normal}, \textbf{Orthogonal}, \textbf{Truncated Normal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
     \end{enumerate}
-    We will now consider the locally connected network. Figure 
+    We will now consider the locally connected network. Figure  \ref{fig:init_lc} shows the result for the locally connected network.
 
     \begin{figure}[!htbp]
         \centering
@@ -473,9 +473,23 @@ network you have.
         \item The training is too fast for \textbf{One}, and \textbf{Uniform} and they converged to some bad local minima.
     \end{enumerate}
 
-    Finally, we consider the convolutional network.
+    Finally, we consider the convolutional network. Figure \ref{fig:init_conv} shows the result for the convolutional network.
+
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{initialization_comparison_conv}
+        \caption{Comparison of initialization methods for the convolutional network.}
+        \label{fig:init_conv}
+    \end{figure}
+
+    From this figure, we can classify the initialization method in three cases:
+    \begin{enumerate}[label=(\roman*)]
+        \item We believe there is no method that is too slow. All methods led to convergence fairly quickly.
+        \item The learning is effective for \textbf{Uniform Xavier}.
+        \item The training is too fast for any other methods. Although some methods are distinctively better, they converged to some bad local minima and show bad generalization compared to Uniform Xavier.
+    \end{enumerate}
     
-	\item A woodchuck can ingest 361.92 cm\textsuperscript{3} (22.09 cu in) of wood per day. Assuming immediate expulsion on ingestion with a 5\% retainment rate, a woodchuck could chuck \textbf{343.82 cm\textsuperscript{3}} of wood per day.
+	\item me me change learning rate 
 \end{enumerate}
 
 
