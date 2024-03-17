@@ -398,7 +398,32 @@ Conv2d(12,3)
 \begin{algorithm}
         \caption{The Coarse-to-Fine Random Search Algorithm}\label{alg:NAS}
         \begin{algorithmic}
-         \State   
+         \Require An initial number of neurons $(n_1,n_2,n_3)$
+         \Require An initial number of random samples $s$
+         \Require An initial number of epochs $e$
+         \Require An initial batch size $b$
+         \Require The number of rounds $r$
+         \State Initialize the best $n$ in a round: $(N_1,N_2,N_3) = (n_1,n_2,n_3)$
+        \State Initialize the temporary storage for $N_1,N_2,N_3$. We only update them after the end of a round to avoid shrinking the search space too fast.$(\bar{N}_1,\bar{N}_2,\bar{N}_3) = (N_1,N_2,N_3)$
+         \State Initialize the best accuracy: $a=0$
+         \For{rounds=$1,\cdots , r$}
+            \For{sample=$1,\cdots ,s$}
+                \State Pick $\hat{n_1},\hat{n_2}$ and $\hat{n_3}$ in descending order. We bound them by $(N_1,N_2,N_3)$ so that the search space gets smaller as we go:
+                \State Pick $\hat{n_3}$ randomly from $10,11,\cdots \max(N_3, 11)$
+                \State Pick $\hat{n_2}$ randomly from $\hat{n_3},\cdots \textrm{max}(N_2,11)$
+                \State Pick $\hat{n_1}$ randomly from $\hat{n}_2,\cdots \max(N_1,11)$
+                \State Train a neural network where $\hat{n}_i$ is the number of layers in the $i$th layer (The number in the last layer is fixed to be $10$) for $e$ epochs with $b$ batch sizes.
+                \If{Accuracy for this sample > $a$}
+                \State $(\bar{N}_1,\bar{N}_2,\bar{N}_3) = (\hat{n}_1,\hat{n}_2,\hat{n}_3)$
+                \State $a$ = Accuracy for this sample
+                \EndIf
+            \EndFor
+            \State $(N_1,N_2,N_3) = (\hat{N}_1,\hat{N}_2,\hat{N}_3)$
+            \State Decrease the number of samples for computational expense and increase/decrease the number of epochs and batch size to increase the complexity of the model.
+            \State $s\leftarrow s/2$
+            \State $e \leftarrow e+10$
+            \State $b \leftarrow b/2$
+         \EndFor
         \end{algorithmic}
 \end{algorithm}
 %----------------------------------------------------------------------------------------
@@ -438,6 +463,7 @@ network you have.
         
         \item \textbf{Normal}. We choose the weights from the normal distribution with mean $0$ and standard deviation $0.1$. We have also tested the standard normal distribution ($\textrm{SD}=1$), but we noticed an overflow in the initial loss (hence, the loss for all epochs was \verb|nan|).
         \item \textbf{Uniform}. We choose the weights from the uniform distribution on $[0,1]$.
+        \item \textbf{Truncated Normal}. We choose the weights from the standard truncated normal distribution on $[-0.1,0.1]$.
         \item \textbf{Uniform Xavier (Glorot).} We choose the weights from the uniform distribution on $(-a,a)$ where $a = \sqrt{\frac{6}{n_{in}+n_{out}}}$, and $n_{in}$ and $n_{out}$ is determined as follows: For a fully connected layer, $n_{in}$ is the number of inputs and $n_{out}$ is the number of outputs. For a convolutional layer, $n_{in}$ is equal to $(\textrm{the number of input features})\times (\textrm{kernel size})^2$, and $n_{out}$ is similar with output features. We use the same $n_{in}$ and $n_{out}$ for a locally connected layer.
     \item \textbf{Normal Xavier (Glorot).} We choose the weights from the uniform distribution of mean $0$ and the variance $\frac{2}{n_{in}+n_{out}}$ where $n_{in}$ and $n_{out}$. These parameters have the same meaning as previously.
     \item \textbf{Orthogonal.} We initialize the weights by an orthogonal matrix. If the weights tensor have the dimension higher than $2$, we flatten the extraneous dimensions to get a $2$-D tensor (a matrix).
@@ -454,8 +480,8 @@ network you have.
     From this figure, we can classify the initialization method in three cases:
     \begin{enumerate}[label=(\roman*)]
         \item We believe that no method learns too slowly. In fact, we can observe that all initialization methods led to convergence to some local minima fairly quickly, although some converged to bad local minima.
-        \item The learning is effective for \textbf{Normal Xavier}.
-        \item The learning is too fast for  \textbf{Zero}, \textbf{One}, \textbf{Uniform} \textbf{Normal}, \textbf{Orthogonal}, \textbf{Truncated Normal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
+        \item The learning is effective for \textbf{Normal Xavier} and \textbf{Truncated Normal}.
+        \item The learning is too fast for  \textbf{Zero}, \textbf{One}, \textbf{Uniform} \textbf{Normal}, \textbf{Orthogonal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
     \end{enumerate}
     We will now consider the locally connected network. Figure  \ref{fig:init_lc} shows the result for the locally connected network.
 
@@ -489,7 +515,48 @@ network you have.
         \item The training is too fast for any other methods. Although some methods are distinctively better, they converged to some bad local minima and show bad generalization compared to Uniform Xavier.
     \end{enumerate}
     
-	\item me me change learning rate 
+	\item Figure \ref{fig:fc_lr} shows the compassion between different learning rates for the fully connected network. We fixed the seeds of the random number generator to obtain the same initialization. The losses at the beginning are different because these are losses after one update.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{lr_comparison_fc}
+        \caption{Comparison of learning rates for the fully connected network.}
+        \label{fig:fc_lr}
+    \end{figure}
+    
+    Based on this figure, we can classify the learning rates in three cases:
+    \begin{enumerate}[label = (\roman*)]
+        \item Learning is too slow for 1e-5, 0.001, 0.01 and 0.1.
+        \item Learning is effective for 0.2 and 0.0001.
+        \item Learning is too fast for 0.5.
+    \end{enumerate}
+    We will now consider the locally connected network. Figure \ref{fig:lc_lr} shows the result for the locally connected network.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{lr_comparison_lc}
+        \caption{Comparison of learning rates for the locally connected network.}
+        \label{fig:lc_lr}
+    \end{figure}
+
+    Based on this figure, we can classify the learning rates in three cases:
+    \begin{enumerate}[label = (\roman*)]
+        \item Learning is too slow for 1e-5, 0.0001, 0.001, 0.01.
+        \item Learning is effective for 0.1, 0.2, 0.5.
+        \item We believe that no learning rate learns too fast.
+    \end{enumerate}
+
+    Finally, we consider the convolutional network. Figure \ref{fig:conv_lr} shows the result.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{lr_comparison_conv}
+        \caption{Comparison of learning rates for the locally connected network.}
+        \label{fig:conv_lr}
+    \end{figure}
+    Based on this figure, we can classify the learning rates in three cases:
+    \begin{enumerate}[label = (\roman*)]
+        \item Learning is too slow for 1e-5, 0.0001, 0.001, 0.01.
+        \item Learning is effective for 0.1, 0.2.
+        \item Learning is too fast for 0.5.
+    \end{enumerate}
 \end{enumerate}
 
 
@@ -517,7 +584,13 @@ your fully connected neural network.
 \begin{enumerate}[label = (\arabic*)] 
 	\item 
     
-	\item 
+	\item If the keeping probability is high, then the model observes less noise, and the model capability is high. This means that the model might overfit. If the keeping probability is low, then the model observes more noise, and the model capability is low. This means that lower probability has a more regularizing effect, but our model might underfit. Figure \ref{fig:dropout_comparison} shows the result for different dropout probabilities for our fully connected network. We inserted a dropout layer between the third layer and the fourth layer. \textbf{Note that the} \verb|prob| \textbf{parameter here is the probability of dropping out a neuron instead of keeping it.} We observe that the models with lower \verb|prob| (i.e., 0.1 and 0.2) overfit the data, and the validation accuracy is low. For the rest of the parameters, they are effective with little variation. It might be surprising that the higher dropout probability does not lead to underfitting. It is probably because we already have so many neurons in the third layer (737 neurons), so 10\% of them is approximately 74 neurons, which is still a significant amount.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{dropout_comparison_fc}
+        \caption{The comparison between different dropout parameters.}
+        \label{fig:dropout_comparison}
+    \end{figure}
 \end{enumerate}
 %----------------------------------------------------------------------------------------
 \begin{comment}
