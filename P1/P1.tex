@@ -548,7 +548,7 @@ network you have.
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\textwidth]{lr_comparison_conv}
-        \caption{Comparison of learning rates for the locally connected network.}
+        \caption{Comparison of learning rates for the convolutional network.}
         \label{fig:conv_lr}
     \end{figure}
     Based on this figure, we can classify the learning rates in three cases:
@@ -584,7 +584,7 @@ your fully connected neural network.
 \begin{enumerate}[label = (\arabic*)] 
 	\item 
     
-	\item If the keeping probability is high, then the model observes less noise, and the model capability is high. This means that the model might overfit. If the keeping probability is low, then the model observes more noise, and the model capability is low. This means that lower probability has a more regularizing effect, but our model might underfit. Figure \ref{fig:dropout_comparison} shows the result for different dropout probabilities for our fully connected network. We inserted a dropout layer between the third layer and the fourth layer. \textbf{Note that the} \verb|prob| \textbf{parameter here is the probability of dropping out a neuron instead of keeping it.} We observe that the models with lower \verb|prob| (i.e., 0.1 and 0.2) overfit the data, and the validation accuracy is low. For the rest of the parameters, they are effective with little variation. It might be surprising that the higher dropout probability does not lead to underfitting. It is probably because we already have so many neurons in the third layer (737 neurons), so 10\% of them is approximately 74 neurons, which is still a significant amount.
+	\item If the keeping probability is high, then the model observes less noise, and the model capability is high. This means that the model might overfit. If the keeping probability is low, then the model observes more noise, and the model capability is low. This means that lower probability has a more regularizing effect, but our model might underfit. Figure \ref{fig:dropout_comparison} shows the result for different dropout probabilities for our fully connected network. We inserted a dropout layer between the third layer and the fourth layer. \textbf{Note that the} \verb|prob| \textbf{parameter here is the probability of dropping out a neuron instead of keeping it.} We observe that $p=0.3, p=0.9$ performs well compared to others, although the improvement is marginal. 
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\textwidth]{dropout_comparison_fc}
