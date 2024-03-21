@@ -56,7 +56,7 @@
 
 \author{Mao Nishino, Farez Siddiqui} % Student name
 
-\date{March 19th, 2024} % Due date
+\date{March 21st, 2024} % Due date
 
 \institute{Florida State University \\ Department of Computer Science} % Institute or school name
 
@@ -95,7 +95,7 @@ In your report, you need to provide explanations of your design choices and desc
 \subsection*{Answer}
 The architectures for each network are shown in Figure \ref{fig:p1_architectures}. We will give detailed descriptions and explanations behind the design choices.
 \begin{enumerate}[label = (\arabic*)] 
-	\item This is a fully connected four-layer neural network with ReLU as activation functions.  We have chosen ReLU as the activation function because this is the standard default choice \cite[p188]{Goodfellow-et-al-2016} and other choices such as the sigmoidal function or tanh are discouraged for saturation issues when used in hidden layers\cite[p191]{Goodfellow-et-al-2016}. As for the number of layers, we have chosen $4$ simply because it was the minimal number we were required to have.  
+	\item This is a fully connected four-layer neural network with ReLU as activation functions.  We have chosen ReLU as the activation function because this is the standard default choice \cite[p188]{Goodfellow-et-al-2016} and other choices such as the sigmoidal function or tanh are discouraged for saturation issues when used in hidden layers\cite[p191]{Goodfellow-et-al-2016}. As for the number of layers, we have chosen 44 simply because it was the minimal number we were required to have.  
  
     \textbf{Extra Credit Attempt: Architecture Optimization} We have employed the commonly used "coarse-to-fine" strategy to choose the number of neurons in each layer. The detailed algorithm is stated in Algorithm \ref{alg:NAS}. We have predetermined any hyperparameters other than the number of neurons for simplicity and ease of training. Still, the idea of the algorithm is clearly applicable in more general search spaces. The basic idea of the algorithm is to conduct random searches in increasingly smaller search spaces. Although there are other search strategies, such as reinforcement learning-based or evolutionary algorithm-based algorithms \cite[p68]{automl}, we have chosen a random search-based algorithm because it is simple to implement. Although random search performs worse than the aforementioned methods, the gain from choosing them is often small \cite[p69]{automl}. To alleviate the computational cost, we start from the models trained with less training time. We gradually increase the training time by increasing the number of epochs and decreasing the batch size. That is, we take a common strategy of evaluating performance in less complicated situations and gradually increasing complexity for more accurate performance estimation, as recommended in \cite[p71]{automl}.
     
@@ -557,6 +557,24 @@ network you have.
         \item Learning is effective for 0.1, 0.2.
         \item Learning is too fast for 0.5.
     \end{enumerate}
+    \newpage\item Batch normalization is an adaptive reparametrization method meant to deal with the problem of covariate shift found in deep networks. Covariate shift arises when the distribution of the test dataset used in training differs significantly enough from the test data so as to cause poor generalization performance. This happens in deep networks because changes in the distribution of the test dataset cause changes in the distribution of network activations, and since deep networks are composition-upon-composition of network activations, this shift can propagate throughout the network and cause both slower learning and poor generalization performance.\\\\
+    Batch normalization seeks to address this taking advantage of the fact that network training converges faster with "whitened" inputs to each layer (decorrelate and linearly transform the inputs to have to have mean 0 and variance 1.) This is done by subtracting the empirical mean from the output layer and dividing by the empirical standard deviation. These statistics are computed from the batch used in the optimization method, and therein lies where batch size will have an impact on this process. From this setup, it's clear that larger batch sizes would act to help the effectiveness of batch normalization because the statistics of a larger batch would better represent the statistics of the entire dataset which would lead to more accurate normalization. On the other hand, it is known that smaller batch sizes lead to better generalization performance, so there is an aspect of picking too large of a batch size when it comes to batch normalization. Ultimately, batch size should be played around with to find an optimal size for the problem at hand.\\\\
+    For the project, we implement different batch sizes to our convolutional neural network to find effective batch sizes would be for this problem. The problem did not state that we were to implement batch normalization, only to study the effect of different batch sizes, so no BatchNorm layers were added to the network to change its architecture. Batch size was adjusted in the DataLoader parameter to test 10 different batch sizes ranging from 10 to the entire training dataset. The optimal parameter initialization and learning rate we found for our CNN in the previous sections were used. The results can be found in Figure 8. From our experiments (each lasting 100 epochs), it appears that the batch sizes 16, 32, 64, 256, and 512 were effective batch sizes resulting in acceptable generalization error in 100 epochs, where as the larger batch sizes and the smaller batch size of 128 showed generally poorer performance. It could be the case that some of these sizes could have shown more promise if we had trained over more epochs, which would be a viable option seeing as each epoch took less time than their smaller batch size counterparts to train. One peculiarity is that the batch size of 128 performed so much poorer than batch sizes both smaller and larger than itself. We don't know why this anomaly may have occurred.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{batch_size_comparison}
+        \caption{The comparison between different batch sizes.}
+        \label{fig:batch_size_comparison}
+    \end{figure}
+
+    \item Momentum helps optimizers overcome issues with the loss surface caused by poorly conditioned Hessian matrices, as well as the inherent variance in Stochastic Gradient Descent. When the loss surface has plateaus, is very noisy, or is poorly conditioned, the most recent gradient update may push the parameters that is not optimal and slow learning down. By keeping a running tally of previous gradient updates and applying them to the most recent gradient update via an exponentially decaying sum, the gradient gains a sort of "momentum" that can help it out of problem areas of the loss surface.\\\\
+    We tested 3 different values for momentum (0.5, 0.9, and 0.99) to see their effects on the speed of the learning in our convolutional neural network. The results can be found in Figure 9. Our results show that large momentum values significantly impair the network's performance. There may be a multitude of reasons that larger momentum values hurt the networks performance. It could be that the accumulated gradient is so large that the optimizer consistently overshoots the loss surface's minima, or that the higher dependence on past gradients makes the network less sensitive to new training data, effectively shutting down performance. From our results we find that using no momentum or a momentum values of 0.5 produced acceptable results.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{momentum_comparison}
+        \caption{The comparison between different momentum values.}
+        \label{fig:momentum_comparison}
+    \end{figure}
 \end{enumerate}
 
 
@@ -569,8 +587,7 @@ For this task, you need to do the required analysis and apply the following regu
 goal to improve the performance on the 2007 samples in zip\_test.txt.
 \begin{enumerate}[label = (\arabic*)]
 \item Use an ensemble to improve the generalization performance. Here you need to use at least three neural
-networks to improve the performance of the individual neural networks. You need to analyze your
-results. You can use the neural networks from Task II.
+networks to improve the performance of the individual neural networks. You need to analyze your results. You can use the neural networks from Task II.
 \item Dropout. Explain the effects of the dropout parameter (probability of keeping a neuron) on the fully
 connected neural network you have. Then demonstrate an effective case and an ineffective case on
 your fully connected neural network.
@@ -582,9 +599,15 @@ your fully connected neural network.
 \subsection*{Answer} 
 
 \begin{enumerate}[label = (\arabic*)] 
-	\item 
+	\item Ensemble methods seek to use the learned features of several models and combine their inferences to produce a better prediction. Technically speaking, this can be accomplished by training each model and at the end of each epoch, take the average of their outputs. The resulting output is the output of the ensemble model. In the case of our problem, each model's output is a 1-dimensional tensor of length 10, which represents the probability that the input is one of ten digits. We use PyTorch's \verb|torch.stack()| method to aggregate the output tensors of each model and then do an an element-wise average to get the ensemble model's output. The results can be found in Figure 10. The ensemble model does very little to improve over the convolutional neural network. We would expect this, because convolutional neural networks are significantly more suited for vision tasks such as recognizing digits than locally connected or feed forward networks. We would expect taking any insights from less well-suited networks would only prove to hurt generalization performance rather than improve it. We may have seen better results if we had used 3 convolutional neural networks with different architectures, however as it is shown the CNN we had used thus far had such good generalization performance that any improvement we could possibly glean from an ensemble model would prove marginal at best.
+    \begin{figure}[!htbp]
+        \centering
+        \includegraphics[width=\textwidth]{ensemble_comparison}
+        \caption{Comparing the generalization error of the 3 individual models and their ensemble.}
+        \label{fig:ensemble_comparison}
+    \end{figure}
     
-	\item If the keeping probability is high, then the model observes less noise, and the model capability is high. This means that the model might overfit. If the keeping probability is low, then the model observes more noise, and the model capability is low. This means that lower probability has a more regularizing effect, but our model might underfit. Figure \ref{fig:dropout_comparison} shows the result for different dropout probabilities for our fully connected network. We inserted a dropout layer between the third layer and the fourth layer. \textbf{Note that the} \verb|prob| \textbf{parameter here is the probability of dropping out a neuron instead of keeping it.} We observe that \verb|prob|=0.2 through 0.7 works effectively, while others perform worse. We note that \verb|prob|=0.1 performs the worst, which is expected as the regularization effect coming from dropout is low.
+	\item If the keeping probability is high, then the model observes less noise, and the model capability is high. This means that the model might overfit. If the keeping probability is low, then the model observes more noise, and the model capability is low. This means that lower probability has a more regularizing effect, but our model might underfit. Figure \ref{fig:dropout_comparison} shows the result for different dropout probabilities for our fully connected network. We inserted a dropout layer between the third layer and the fourth layer. \textbf{Note that the} \verb|prob| \textbf{parameter here is the probability of dropping out a neuron instead of keeping it.} We observe that \verb|prob|=0.1 through 0.9 works effectively except for $0.3$. We note that \verb|prob|=0 performs the worst, which is expected as there is no regularization effect.
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\textwidth]{dropout_comparison_fc}
@@ -642,8 +665,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent porttitor arcu
 	]{}
 	
 	\begin{enumerate}
-		\item How many luftballons will be output by the Listing \ref{lst:luftballons} above?
-		\item Identify the regular expression in Listing \ref{lst:luftballons} and explain how it relates to the anti-war sentiments found in the rest of the script.
+		\item How many luftballons will be output by the Listing ???????????????\ref{lst:luftballons} above?
+		\item Identify the regular expression in Listing ???????????????\ref{lst:luftballons} and explain how it relates to the anti-war sentiments found in the rest of the script.
 	\end{enumerate}
 
 \end{problem}
