@@ -95,7 +95,7 @@ In your report, you need to provide explanations of your design choices and desc
 \subsection*{Answer}
 The architectures for each network are shown in Figure \ref{fig:p1_architectures}. We will give detailed descriptions and explanations behind the design choices.
 \begin{enumerate}[label = (\arabic*)] 
-	\item This is a fully connected four-layer neural network with ReLU as activation functions.  We have chosen ReLU as the activation function because this is the standard default choice \cite[p188]{Goodfellow-et-al-2016} and other choices such as the sigmoidal function or tanh are discouraged for saturation issues when used in hidden layers\cite[p191]{Goodfellow-et-al-2016}. As for the number of layers, we have chosen 44 simply because it was the minimal number we were required to have.  
+	\item This is a fully connected four-layer neural network with ReLU as activation functions.  We have chosen ReLU as the activation function because this is the standard default choice \cite[p188]{Goodfellow-et-al-2016} and other choices such as the sigmoidal function or tanh are discouraged for saturation issues to use in hidden layers\cite[p191]{Goodfellow-et-al-2016}. As for the number of layers, we have chosen 4 simply because it was the minimal number we were required to have.  
  
     \textbf{Extra Credit Attempt: Architecture Optimization} We have employed the commonly used "coarse-to-fine" strategy to choose the number of neurons in each layer. The detailed algorithm is stated in Algorithm \ref{alg:NAS}. We have predetermined any hyperparameters other than the number of neurons for simplicity and ease of training. Still, the idea of the algorithm is clearly applicable in more general search spaces. The basic idea of the algorithm is to conduct random searches in increasingly smaller search spaces. Although there are other search strategies, such as reinforcement learning-based or evolutionary algorithm-based algorithms \cite[p68]{automl}, we have chosen a random search-based algorithm because it is simple to implement. Although random search performs worse than the aforementioned methods, the gain from choosing them is often small \cite[p69]{automl}. To alleviate the computational cost, we start from the models trained with less training time. We gradually increase the training time by increasing the number of epochs and decreasing the batch size. That is, we take a common strategy of evaluating performance in less complicated situations and gradually increasing complexity for more accurate performance estimation, as recommended in \cite[p71]{automl}.
     
@@ -414,11 +414,11 @@ Conv2d(12,3)
                 \State Pick $\hat{n_1}$ randomly from $\hat{n}_2,\cdots \max(N_1,11)$
                 \State Train a neural network where $\hat{n}_i$ is the number of layers in the $i$th layer (The number in the last layer is fixed to be $10$) for $e$ epochs with $b$ batch sizes.
                 \If{Accuracy for this sample > $a$}
-                \State $(\bar{N}_1,\bar{N}_2,\bar{N}_3) = (\hat{n}_1,\hat{n}_2,\hat{n}_3)$
-                \State $a$ = Accuracy for this sample
+                \State $(\bar{N}_1,\bar{N}_2,\bar{N}_3) \leftarrow (\hat{n}_1,\hat{n}_2,\hat{n}_3)$
+                \State $a \leftarrow$ Accuracy for this sample
                 \EndIf
             \EndFor
-            \State $(N_1,N_2,N_3) = (\hat{N}_1,\hat{N}_2,\hat{N}_3)$
+            \State $(N_1,N_2,N_3) \leftarrow (\hat{N}_1,\hat{N}_2,\hat{N}_3)$
             \State Decrease the number of samples for computational expense and increase/decrease the number of epochs and batch size to increase the complexity of the model.
             \State $s\leftarrow s/2$
             \State $e \leftarrow e+10$
@@ -481,7 +481,7 @@ network you have.
     \begin{enumerate}[label=(\roman*)]
         \item We believe that no method learns too slowly. In fact, we can observe that all initialization methods led to convergence to some local minima fairly quickly, although some converged to bad local minima.
         \item The learning is effective for \textbf{Normal Xavier} and \textbf{Truncated Normal}.
-        \item The learning is too fast for  \textbf{Zero}, \textbf{One}, \textbf{Uniform} \textbf{Normal}, \textbf{Orthogonal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier.
+        \item The learning is too fast for  \textbf{Zero}, \textbf{One}, \textbf{Uniform} \textbf{Normal}, \textbf{Orthogonal}, \textbf{Uniform Xavier}. They do not generalize well compared to Normal Xavier and Truncated Normal.
     \end{enumerate}
     We will now consider the locally connected network. Figure  \ref{fig:init_lc} shows the result for the locally connected network.
 
@@ -515,7 +515,7 @@ network you have.
         \item The training is too fast for any other methods. Although some methods are distinctively better, they converged to some bad local minima and show bad generalization compared to Uniform Xavier.
     \end{enumerate}
     
-	\item Figure \ref{fig:fc_lr} shows the compassion between different learning rates for the fully connected network. We fixed the seeds of the random number generator to obtain the same initialization. The losses at the beginning are different because these are losses after one update.
+	\item Figure \ref{fig:fc_lr} shows the comparison between different learning rates for the fully connected network. We fixed the seeds of the random number generator to obtain the same initialization. The losses at the beginning are different because these are losses after one update.
     \begin{figure}[!htbp]
         \centering
         \includegraphics[width=\textwidth]{lr_comparison_fc}
