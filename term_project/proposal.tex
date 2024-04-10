@@ -43,6 +43,7 @@
 \usepackage{enumitem}
 \usepackage{mwe}
 \usepackage{comment}
+\usepackage{pgfgantt}
 
 %----------------------------------------------------------------------------------------
 %	ASSIGNMENT INFORMATION
@@ -67,16 +68,24 @@
 \maketitle % Output the assignment title, created automatically using the information in the custom commands above
 
 \section*{Project Issue and Goals} 
-In the past eight years since Transformers \cite{att} was born, deep learning has progressed dramatically, and many state-of-the-art models rely on Transformers nowadays. The emergence of GPT models \cite{radford2018improving} changed not only the academic deep-learning community but also society as a whole by introducing a highly intelligent agent to everyday life. On the other hand, although it is already used extensively in the workforce, its safety is still an active area of research. In particular, in computer vision, the models based on Vision Transformers (ViT) are known to be very sensitive to adversarial examples, which are examples made to deceive recognition models \cite{salman2024intriguing}. To understand this phenomenon better, we believe a deeper understanding of the dynamics of Transformers using tools from theoretical and computational mathematics is necessary. \\
+In the past eight years since Transformers \cite{att} were born, deep learning has progressed dramatically, and many state-of-the-art models rely on Transformers nowadays. The emergence of GPT models \cite{radford2018improving} changed not only the academic deep-learning community but also society as a whole by introducing a highly intelligent agent to everyday life. On the other hand, although it is already used extensively in the workforce, its safety is still an active area of research. In particular, in computer vision, the models based on Vision Transformers (ViT) are known to be very sensitive to adversarial examples, which are examples made to deceive recognition models \cite{salman2024intriguing}. To understand this phenomenon better, we believe a deeper understanding of the dynamics of Transformers using tools from theoretical and computational mathematics is necessary. \\
 
 This project will focus on the sensitivity of Transformers concerning the input data. In particular, our goal is to \textbf{theoretically and numerically verify the sensitive nature of Vision Transformers based on principles from analysis and geometry}. Our aims are described as follows:
 
 \begin{enumerate}
-    \item \textbf{Theoretical and numerical investigation of sensitivity for models proposed by \cite{geshkovski2024mathematical}}. Geshkovski et al. viewed Transformers as a partial differential equation on a high-dimensional sphere. Moreover, its connection to gradient flows, which generalizes the notion of gradient descent to the space of probability distributions, was drawn. Using the tools from optimal transport and dynamical systems, we will seek a qualitative and quantitative understanding of the differential equation modeling Transformers.
+    \item \textbf{Theoretical and numerical investigation of sensitivity for models proposed by \cite{geshkovski2024mathematical}}. Geshkovski et al. viewed Transformers as a partial differential equation on a high-dimensional sphere. Moreover, its connection to gradient flows, which generalizes the notion of gradient descent to the space of probability distributions, was drawn. We will seek a qualitative and quantitative understanding of the differential equation modeling Transformers using tools from optimal transport, differential geometry, and dynamical systems.
     \item \textbf{Reconstruction and generalization of several empirical results regarding Vision Transformers.} Although ViT-based models are not entirely immune to adversarial examples, it is understood that ViT-based models show better robustness compared to convolutional networks, which are commonly used for image recognition tasks. Following \cite{naseer2021intriguing}, \cite{zhou2022understanding}, and \cite{salman2024intriguing}, we reconstruct their results and see if they generalize to more recent models. 
 
     
 \end{enumerate}
+\section*{Schedule of project activities.}
+Below, we enumerate the planned schedule for our project for each member of the team. 
+\begin{itemize}
+    \item {Week 1.} Nishino will work on reviewing the concepts in differential geometry needed to work on the problem. Siddiqui will collect the ViT-based image recognition models and figure out how they work.
+    \item {Week 2.} Nishino will try to write down the concepts covered in \cite{salman2024intriguing} formally using the tools introduced in \cite{geshkovski2024mathematical}. Siddiqui will try to recreate the figures in \cite{naseer2021intriguing}, especially the figures relating to adversarial patches.
+    \item{Week 3.} Nishino will work on numerical estimation of the Jacobian matrix based on the model in \cite{geshkovski2024mathematical} to see the relation between the method in \cite{salman2024intriguing}. Siddiqui will work on recreating the result in \cite{salman2024intriguing}, especially the properties of null spaces and normal spaces.
+    \item{Week 4.} We will write a comprehensive report summarizing the result and submit it.
+\end{itemize}
 
 \bibliographystyle{plain}
 \bibliography{term_project/bib_term_project.bib}
