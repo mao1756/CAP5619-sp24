@@ -20,7 +20,9 @@ This is a personal repository to manage the assignment submission for CAP5619: D
 
 ## Term Project
 
-|P#|Title|Grade I got|
-|----|----|----|
-|1|Transformers and Its Sensitivity (Proposal)|10/10|
-|2|Transformers and Its Sensitivity (Report)|TBD/90|
+Title: Transformers and Its Sensitivity
+
+|Submission|Grade I got|
+|----|----|
+|Proposal|10/10|
+|Final Report|TBD/90|
