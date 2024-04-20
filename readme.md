@@ -3,6 +3,7 @@
 This is a personal repository to manage the assignment submission for CAP5619: Deep and Reinforcement Learning Fundamentals at Florida State University.
 
 ## Topics of each HW
+EC = Extra Credit
 
 |HW#|Topic|Grade I got|
 |----|----|----|
