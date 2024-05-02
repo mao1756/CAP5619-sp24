@@ -9,7 +9,7 @@ EC = Extra Credit
 |----|----|----|
 |1|Activation functions, Feedforward NNs, Distributed representations of words|60+8(EC)/60|
 |2|Regularization and Optimization|60/60|
-|3|Convolutional and Recurrent Neural Networks|TBD/75|
+|3|Convolutional and Recurrent Neural Networks|75/75|
 
 
 ## Topics of each Programming Assignments
