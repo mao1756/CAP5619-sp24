@@ -17,7 +17,7 @@ EC = Extra Credit
 |P#|Topic|Grade I got|
 |----|----|----|
 |1|Neural Network Architectures, Optimization and Regularization Techniques|100+10(EC)/110|
-|2|Transformers and Large Language Models|TBD/100|
+|2|Transformers and Large Language Models|100/100|
 
 ## Term Project
 
@@ -26,4 +26,4 @@ Title: Transformers and Its Sensitivity
 |Submission|Grade I got|
 |----|----|
 |Proposal|10/10|
-|Final Report|TBD/90|
+|Final Report|90/90|
